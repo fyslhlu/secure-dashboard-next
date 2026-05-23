@@ -1,22 +1,7 @@
-const Button = ({ children, variant }: { children: React.ReactNode; variant?: string }) => (
-  <button className={`px-4 py-2 rounded-lg font-medium ${variant === "secondary" ? "bg-slate-800 text-white hover:bg-slate-700" : "bg-violet-600 text-white hover:bg-violet-700"}`}>
-    {children}
-  </button>
-);
-
-const Card = ({ children }: { children: React.ReactNode }) => (
-  <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-    {children}
-  </div>
-);
-
-const PageHeader = ({ label, title, description }: { label: string; title: string; description: string }) => (
-  <div className="mb-6">
-    <p className="text-xs font-semibold text-violet-400">{label}</p>
-    <h1 className="mt-2 text-3xl font-bold">{title}</h1>
-    <p className="mt-2 text-slate-400">{description}</p>
-  </div>
-);
+import Link from "next/link";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import PageHeader from "@/components/ui/PageHeader";
 
 export default function HomePage() {
   return (
@@ -52,7 +37,10 @@ export default function HomePage() {
             />
 
             <div className="flex gap-4">
-              <Button>Start Login</Button>
+              <Link href="/login">
+                <Button>Start Login</Button>
+              </Link>
+
               <Button variant="secondary">View Features</Button>
             </div>
           </Card>
@@ -73,7 +61,7 @@ export default function HomePage() {
           </div>
 
           <Card>
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-bold">Authentication Flow</h2>
                 <p className="text-sm text-slate-400">
@@ -81,7 +69,9 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <Button>Start Login</Button>
+              <Link href="/login">
+                <Button>Start Login</Button>
+              </Link>
             </div>
 
             <div className="grid gap-3 md:grid-cols-4">
