@@ -1,3 +1,7 @@
+import {
+  findUserByEmail,
+  verifyDemoUserPassword,
+} from "@/lib/auth/demoUsers";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -32,11 +36,33 @@ export async function POST(request: Request) {
       );
     }
 
+    const user = findUserByEmail(email);
+
+    if (!user) {
+      return Response.json(
+        { message: "Invalid email or password." },
+        { status: 401 },
+      );
+    }
+
+const passwordMatches = await verifyDemoUserPassword(password, user.password);
+    if (!passwordMatches) {
+      return Response.json(
+        { message: "Invalid email or password." },
+        { status: 401 },
+      );
+    }
+
     return Response.json(
       {
         message:
-          "Human verification passed. Next step will be password checking and OTP.",
-        email,
+          "Login credentials are valid. Next step will be email OTP verification.",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
       },
       { status: 200 },
     );
