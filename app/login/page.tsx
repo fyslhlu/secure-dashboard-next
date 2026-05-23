@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Turnstile } from "@marsidev/react-turnstile";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -11,6 +12,9 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
+
+  
+  const router = useRouter();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -41,6 +45,7 @@ export default function LoginPage() {
       }
 
       alert(data.message);
+      router.push(`/verify-otp?email=${encodeURIComponent(data.email || email)}`);  
     } catch (error) {
       console.error("Login request error:", error);
       alert("Something went wrong. Please try again.");

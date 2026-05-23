@@ -25,6 +25,12 @@ export default function VerifyOtpForm() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    if (!email) {
+      alert("Email is missing. Please login again.");
+      router.push("/login");
+      return;
+    }
+
     try {
       const response = await fetch("/api/auth/verify-otp", {
         method: "POST",
@@ -58,19 +64,10 @@ export default function VerifyOtpForm() {
         <PageHeader
           label="Two-Factor Authentication"
           title="Verify OTP"
-          description="Enter the 6-digit OTP generated after login."
+          description="Enter the 6-digit OTP sent to your email."
         />
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <Input
-            label="Email address"
-            type="email"
-            placeholder="admin@example.com"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-
           <Input
             label="OTP code"
             type="text"
@@ -84,8 +81,7 @@ export default function VerifyOtpForm() {
         </form>
 
         <p className="mt-6 text-sm text-slate-500">
-          For now, the OTP appears in the terminal. Later, we will send it by
-          email.
+          The OTP was sent to your email. It expires after 5 minutes.
         </p>
       </Card>
     </main>

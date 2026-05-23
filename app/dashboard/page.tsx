@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import PageHeader from "@/components/ui/PageHeader";
 import LogoutButton from "@/components/ui/LogoutButton";
+import UserManagementPanel from "@/components/dashboard/UserManagementPanel";
 import { verifyAuthToken } from "@/lib/auth/jwt";
 
 export default async function DashboardPage() {
@@ -52,62 +52,7 @@ export default async function DashboardPage() {
           </div>
         </Card>
 
-        <Card>
-          <div className="mb-5">
-            <h2 className="text-xl font-bold text-white">User Management</h2>
-            <p className="text-sm text-slate-400">
-              Admins can add, edit, delete, and view users. Normal users can
-              only view.
-            </p>
-          </div>
-
-          <div className="mb-6 flex flex-wrap gap-3">
-            {isAdmin && (
-              <>
-                <Button>Add User</Button>
-                <Button variant="secondary">Edit User</Button>
-                <Button variant="danger">Delete User</Button>
-              </>
-            )}
-
-            <Button variant="secondary">View Users</Button>
-          </div>
-
-          <div className="overflow-hidden rounded-2xl border border-slate-800">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-950 text-slate-400">
-                <tr>
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Email</th>
-                  <th className="px-4 py-3">Role</th>
-                  <th className="px-4 py-3">Permission</th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-slate-800">
-                <tr>
-                  <td className="px-4 py-3 text-white">Admin User</td>
-                  <td className="px-4 py-3 text-slate-300">
-                    admin@example.com
-                  </td>
-                  <td className="px-4 py-3 text-violet-400">ADMIN</td>
-                  <td className="px-4 py-3 text-green-400">
-                    Add / Edit / Delete / View
-                  </td>
-                </tr>
-
-                <tr>
-                  <td className="px-4 py-3 text-white">Normal User</td>
-                  <td className="px-4 py-3 text-slate-300">
-                    user@example.com
-                  </td>
-                  <td className="px-4 py-3 text-blue-400">USER</td>
-                  <td className="px-4 py-3 text-slate-400">View only</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </Card>
+        <UserManagementPanel currentUserRole={user.role} />
 
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
