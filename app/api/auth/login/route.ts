@@ -2,6 +2,8 @@ import {
   findUserByEmail,
   verifyDemoUserPassword,
 } from "@/lib/auth/demoUsers";
+import { generateOtpCode, saveOtp } from "@/lib/auth/otpStore";
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -45,7 +47,11 @@ export async function POST(request: Request) {
       );
     }
 
-const passwordMatches = await verifyDemoUserPassword(password, user.password);
+    const passwordMatches = await verifyDemoUserPassword(
+      password,
+      user.password,
+    );
+
     if (!passwordMatches) {
       return Response.json(
         { message: "Invalid email or password." },
@@ -53,16 +59,25 @@ const passwordMatches = await verifyDemoUserPassword(password, user.password);
       );
     }
 
+    const otpCode = generateOtpCode();
+
+    saveOtp({
+      email: user.email,
+      code: otpCode,
+      role: user.role,
+      name: user.name,
+    });
+
+    console.log("=================================");
+    console.log(`OTP for ${user.email}: ${otpCode}`);
+    console.log("This OTP expires in 5 minutes.");
+    console.log("=================================");
+
     return Response.json(
       {
-        message:
-          "Login credentials are valid. Next step will be email OTP verification.",
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
+        message: "Login successful. OTP has been generated.",
+        nextStep: "/verify-otp",
+        email: user.email,
       },
       { status: 200 },
     );
