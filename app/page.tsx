@@ -1,3 +1,23 @@
+const Button = ({ children, variant }: { children: React.ReactNode; variant?: string }) => (
+  <button className={`px-4 py-2 rounded-lg font-medium ${variant === "secondary" ? "bg-slate-800 text-white hover:bg-slate-700" : "bg-violet-600 text-white hover:bg-violet-700"}`}>
+    {children}
+  </button>
+);
+
+const Card = ({ children }: { children: React.ReactNode }) => (
+  <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    {children}
+  </div>
+);
+
+const PageHeader = ({ label, title, description }: { label: string; title: string; description: string }) => (
+  <div className="mb-6">
+    <p className="text-xs font-semibold text-violet-400">{label}</p>
+    <h1 className="mt-2 text-3xl font-bold">{title}</h1>
+    <p className="mt-2 text-slate-400">{description}</p>
+  </div>
+);
+
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-slate-950 p-6 text-slate-100">
@@ -24,18 +44,18 @@ export default function HomePage() {
         </aside>
 
         <section className="space-y-6">
-          <header className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
-            <p className="text-sm font-semibold uppercase tracking-wide text-violet-400">
-              Secure Dashboard Next
-            </p>
-            <h1 className="mt-2 text-3xl font-bold">
-              Full-Stack Authentication Dashboard
-            </h1>
-            <p className="mt-3 max-w-2xl text-slate-400">
-              Next.js, TypeScript, Tailwind, Cloudflare Turnstile, email OTP,
-              JWT authentication, protected routes, and role-based access.
-            </p>
-          </header>
+          <Card>
+            <PageHeader
+              label="Secure Dashboard Next"
+              title="Full-Stack Authentication Dashboard"
+              description="Next.js, TypeScript, Tailwind, Cloudflare Turnstile, email OTP, JWT authentication, protected routes, and role-based access."
+            />
+
+            <div className="flex gap-4">
+              <Button>Start Login</Button>
+              <Button variant="secondary">View Features</Button>
+            </div>
+          </Card>
 
           <div className="grid gap-4 md:grid-cols-3">
             {[
@@ -43,19 +63,16 @@ export default function HomePage() {
               { label: "Admin Actions", value: "42" },
               { label: "Security Checks", value: "99%" },
             ].map((card) => (
-              <div
-                key={card.label}
-                className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-xl"
-              >
+              <Card key={card.label}>
                 <p className="text-sm text-slate-400">{card.label}</p>
                 <p className="mt-3 text-3xl font-bold text-white">
                   {card.value}
                 </p>
-              </div>
+              </Card>
             ))}
           </div>
 
-          <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
+          <Card>
             <div className="mb-5 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold">Authentication Flow</h2>
@@ -64,9 +81,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <button className="rounded-2xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white hover:bg-violet-700">
-                Start Login
-              </button>
+              <Button>Start Login</Button>
             </div>
 
             <div className="grid gap-3 md:grid-cols-4">
@@ -79,7 +94,7 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </section>
       </section>
     </main>
