@@ -7,13 +7,6 @@ export async function sendOtpEmail({
   name: string;
   otpCode: string;
 }) {
-  console.log("=================================");
-  console.log("sendOtpEmail() started");
-  console.log("Sending OTP email to:", to);
-  console.log("RESEND_API_KEY exists:", Boolean(process.env.RESEND_API_KEY));
-  console.log("EMAIL_FROM:", process.env.EMAIL_FROM);
-  console.log("=================================");
-
   if (!process.env.RESEND_API_KEY) {
     throw new Error("RESEND_API_KEY is missing from .env.local");
   }
@@ -48,9 +41,6 @@ export async function sendOtpEmail({
   });
 
   const result = await response.json();
-
-  console.log("Resend status:", response.status);
-  console.log("Resend result:", result);
 
   if (!response.ok) {
     throw new Error(`Failed to send OTP email: ${JSON.stringify(result)}`);
