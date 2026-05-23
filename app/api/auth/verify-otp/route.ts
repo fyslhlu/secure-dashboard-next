@@ -1,4 +1,5 @@
 import { verifyOtp } from "@/lib/auth/otpStore";
+import { createAuthToken } from "@/lib/auth/jwt";
 
 export async function POST(request: Request) {
   try {
@@ -15,17 +16,32 @@ export async function POST(request: Request) {
 
     const result = verifyOtp(email, otp);
 
-    if (!result.success) {
-      return Response.json({ message: result.message }, { status: 401 });
+    if (!result.success || !result.user) {
+      return Response.json(
+        { message: result.message },
+        { status: 401 },
+      );
     }
 
-    return Response.json(
+    const token = createAuthToken(result.user);
+
+    const response = Response.json(
       {
         message: result.message,
         user: result.user,
+        nextStep: "/dashboard",
       },
       { status: 200 },
     );
+
+    response.headers.set(
+      "Set-Cookie",
+      `auth_token=${token}; HttpOnly; Path=/; Max-Age=3600; SameSite=Lax;${
+        process.env.NODE_ENV === "production" ? " Secure;" : ""
+      }`,
+    );
+
+    return response;
   } catch (error) {
     console.error("Verify OTP route error:", error);
 
