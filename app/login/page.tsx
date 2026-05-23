@@ -1,23 +1,29 @@
 "use client";
 
 import { useState } from "react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import PageHeader from "@/components/ui/PageHeader";
 
-import Link from "next/link";
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    if (!turnstileToken) {
+      alert("Please complete the human verification first.");
+      return;
+    }
+
     console.log("Login submitted:", {
       email,
       password,
+      turnstileToken,
     });
   }
 
@@ -28,6 +34,7 @@ export default function LoginPage() {
           <div className="flex h-full flex-col justify-between">
             <div>
               <div className="mb-6 h-12 w-12 rounded-2xl bg-white/20" />
+
               <p className="text-sm font-semibold uppercase tracking-wide text-violet-200">
                 Secure Dashboard Next
               </p>
@@ -44,16 +51,19 @@ export default function LoginPage() {
             </div>
 
             <div className="grid gap-3">
-              {["Cloudflare Turnstile", "bcrypt password hashing", "Email OTP", "JWT token access"].map(
-                (item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-medium text-slate-100"
-                  >
-                    {item}
-                  </div>
-                ),
-              )}
+              {[
+                "Cloudflare Turnstile",
+                "bcrypt password hashing",
+                "Email OTP",
+                "JWT token access",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-medium text-slate-100"
+                >
+                  {item}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -63,7 +73,7 @@ export default function LoginPage() {
             <PageHeader
               label="Authentication"
               title="Login"
-              description="Enter your account credentials to continue to the security verification step."
+              description="Enter your account credentials and complete human verification."
             />
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -72,7 +82,9 @@ export default function LoginPage() {
                 type="email"
                 placeholder="admin@example.com"
                 value={email}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setEmail(event.target.value)
+                }
                 required
               />
 
@@ -81,12 +93,25 @@ export default function LoginPage() {
                 type="password"
                 placeholder="Enter your password"
                 value={password}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setPassword(event.target.value)
+                }
                 required
               />
 
-              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900 p-4 text-center text-sm text-slate-400">
-                Cloudflare Turnstile human verification will be added here.
+              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                <p className="mb-3 text-sm font-medium text-slate-300">
+                  Human verification
+                </p>
+
+                <Turnstile
+                  siteKey={
+                    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string
+                  }
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onExpire={() => setTurnstileToken("")}
+                  onError={() => setTurnstileToken("")}
+                />
               </div>
 
               <Button type="submit">Continue</Button>
