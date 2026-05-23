@@ -14,7 +14,7 @@ export const demoUsers: DemoUser[] = [
   {
     id: 1,
     name: "Admin User",
-    email: "admin@example.com",
+    email: "faysalhelou14@gmail.com",
     password: "Admin123!",
     role: "ADMIN",
   },

@@ -1,3 +1,4 @@
+import { sendOtpEmail } from "@/lib/auth/sendOtpEmail";
 import {
   findUserByEmail,
   verifyDemoUserPassword,
@@ -61,26 +62,38 @@ export async function POST(request: Request) {
 
     const otpCode = generateOtpCode();
 
-    saveOtp({
-      email: user.email,
-      code: otpCode,
-      role: user.role,
-      name: user.name,
-    });
+saveOtp({
+  email: user.email,
+  code: otpCode,
+  role: user.role,
+  name: user.name,
+});
 
-    console.log("=================================");
-    console.log(`OTP for ${user.email}: ${otpCode}`);
-    console.log("This OTP expires in 5 minutes.");
-    console.log("=================================");
+await sendOtpEmail({
+  to: user.email,
+  name: user.name,
+  otpCode,
+});
 
-    return Response.json(
-      {
-        message: "Login successful. OTP has been generated.",
-        nextStep: "/verify-otp",
-        email: user.email,
-      },
-      { status: 200 },
-    );
+await sendOtpEmail({
+  to: user.email,
+  name: user.name,
+  otpCode,
+});
+
+console.log("=================================");
+console.log(`OTP for ${user.email}: ${otpCode}`);
+console.log("This OTP expires in 5 minutes.");
+console.log("=================================");
+
+return Response.json(
+  {
+    message: "Login successful. OTP was sent to your email.",
+    nextStep: "/verify-otp",
+    email: user.email,
+  },
+  { status: 200 },
+);
   } catch (error) {
     console.error("Login route error:", error);
 
