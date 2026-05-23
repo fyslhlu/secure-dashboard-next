@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!turnstileToken) {
@@ -20,11 +20,31 @@ export default function LoginPage() {
       return;
     }
 
-    console.log("Login submitted:", {
-      email,
-      password,
-      turnstileToken,
-    });
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          turnstileToken,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Login failed.");
+        return;
+      }
+
+      alert(data.message);
+    } catch (error) {
+      console.error("Login request error:", error);
+      alert("Something went wrong. Please try again.");
+    }
   }
 
   return (
