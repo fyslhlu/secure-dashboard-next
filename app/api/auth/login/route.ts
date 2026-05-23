@@ -69,11 +69,26 @@ saveOtp({
   name: user.name,
 });
 
-await sendOtpEmail({
-  to: user.email,
-  name: user.name,
-  otpCode,
-});
+try {
+  await sendOtpEmail({
+    to: user.email,
+    name: user.name,
+    otpCode,
+  });
+} catch (emailError) {
+  console.error("OTP email sending failed:", emailError);
+
+  if (process.env.NODE_ENV === "production") {
+    return Response.json(
+      { message: "Failed to send OTP email. Please try again later." },
+      { status: 500 },
+    );
+  }
+
+  console.warn(
+    "Development fallback: OTP email failed, but login will continue. Use the terminal OTP.",
+  );
+}
 
 await sendOtpEmail({
   to: user.email,
@@ -81,10 +96,6 @@ await sendOtpEmail({
   otpCode,
 });
 
-console.log("=================================");
-console.log(`OTP for ${user.email}: ${otpCode}`);
-console.log("This OTP expires in 5 minutes.");
-console.log("=================================");
 
 return Response.json(
   {
